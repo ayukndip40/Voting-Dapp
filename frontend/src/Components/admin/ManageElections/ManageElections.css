@@ -1,0 +1,153 @@
+/* Basic reset for consistency */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Container styling for the manage elections page */
+.manage-elections {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background: #f4f4f4;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header styling */
+.manage-elections h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form styling */
+.election-form, .update-election-form {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Form input styling */
+.election-form input,
+.update-election-form input,
+.election-form textarea,
+.update-election-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* Submit button styling */
+.election-form button,
+.update-election-form button {
+  background: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.election-form button:hover,
+.update-election-form button:hover {
+  background: #0056b3;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* List container */
+.election-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Individual election card styling */
+.election-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 100%;
+  max-width: 350px;
+}
+
+/* Card hover effect */
+.election-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Card content styling */
+.election-card h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 15px;
+}
+
+.election-card p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 15px 15px;
+}
+
+/* Button styling within cards */
+.election-card a {
+  display: inline-block;
+  padding: 10px 15px;
+  font-size: 0.875rem;
+  color: #ffffff;
+  background: #007bff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+  margin: 0 15px 15px;
+}
+
+.election-card a:hover {
+  background: #0056b3;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  .manage-elections {
+    padding: 10px;
+  }
+
+  .manage-elections h1 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+
+  .election-form,
+  .update-election-form {
+    padding: 15px;
+  }
+
+  .election-card {
+    max-width: 100%;
+  }
+
+  .election-list {
+    flex-direction: column;
+    align-items: center;
+  }
+}

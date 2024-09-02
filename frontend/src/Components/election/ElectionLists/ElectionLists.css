@@ -1,0 +1,97 @@
+/* Container for the entire election list page */
+.election-list-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f4f4f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Search bar container */
+.search-container {
+  margin-bottom: 30px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1em;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* List of elections */
+.election-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.election-item {
+  margin-bottom: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.election-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.election-item button {
+  display: block;
+  width: 100%;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 15px;
+  font-size: 1.1em;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.election-item button:hover {
+  background-color: #0056b3;
+  transform: scale(1.02); /* Slightly enlarge button on hover for a subtle effect */
+}
+
+/* Pagination controls */
+.pagination {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.pagination-button {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 12px 20px;
+  border: 1px solid #007bff;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination-button.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.pagination-button:hover {
+  background-color: #e9ecef;
+}

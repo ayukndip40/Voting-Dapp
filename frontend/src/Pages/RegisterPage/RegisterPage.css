@@ -1,0 +1,68 @@
+/* src/styles/RegisterPage.css */
+.register-page {
+  max-width: 500px; /* Further reduced max-width for smaller screens */
+  width: 70%; /* Full width up to the max-width */
+  margin: 20px auto; /* Centered form with vertical margin */
+  padding: 20px; /* Reduced padding to make the form more compact */
+  border: 1px solid #ddd;
+  border-radius: 8px; /* Slightly reduced border-radius for a tighter look */
+  background-color: #ffffff; /* Clean white background */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Slightly reduced shadow for a subtler effect */
+}
+
+.register-page h2 {
+  text-align: center;
+  margin-bottom: 15px; /* Reduced bottom margin */
+  font-size: 1.6em; /* Slightly smaller font size */
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px; /* Reduced margin for compact spacing */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px; /* Reduced margin for labels */
+  font-weight: 600;
+  color: #555;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px; /* Reduced padding for a more compact input field */
+  border: 1px solid #ddd;
+  border-radius: 4px; /* Reduced border-radius for a tighter look */
+  font-size: 14px; /* Slightly smaller font size for input fields */
+  box-sizing: border-box; /* Include padding and border in width */
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 10px; /* Reduced padding for a more compact button */
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px; /* Reduced border-radius */
+  font-size: 16px; /* Smaller font size for button text */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px); /* Slight lift effect */
+}
+
+button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  margin-top: 10px; /* Reduced top margin */
+}
