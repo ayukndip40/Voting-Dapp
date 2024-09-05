@@ -1,84 +1,138 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getCurrentUser, logoutUser, login as apiLogin } from '../api/authApi';
+import { getCurrentUser, logoutUser, loginUser } from '../api/authApi';
 
 const useAuth = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshLoading, setRefreshLoading] = useState(false);
-  const navigate = useNavigate();
+  console.log('useAuth hook initialized');
 
-  // Function to refetch user data
-  const refetch = async () => {
+  const [user, setUser] = useState(null);
+  console.log('Initial user state:', user);
+
+  const [loading, setLoading] = useState(true);
+  console.log('Initial loading state:', loading);
+
+  const [refreshLoading, setRefreshLoading] = useState(false);
+  console.log('Initial refreshLoading state:', refreshLoading);
+
+  const navigate = useNavigate();
+  console.log('useNavigate hook called');
+
+  // Refetch user data
+  const refetchUser = async () => {
+    console.log('Refetching user data...');
     setRefreshLoading(true);
+    console.log('refreshLoading set to true');
+
     try {
       const currentUser = await getCurrentUser();
+      console.log('Current user fetched:', currentUser);
       setUser(currentUser);
+      console.log('User state updated:', currentUser);
     } catch (error) {
-      console.error('Failed to fetch current user:', error);
+      console.error('Error fetching current user:', error);
       if (error.message === 'Invalid or expired token') {
+        console.log('Token invalid/expired, navigating to /login');
         navigate('/login');
       } else {
         setUser(null);
+        console.log('User set to null due to error');
       }
     } finally {
       setRefreshLoading(false);
+      console.log('refreshLoading set to false');
     }
   };
 
+  // Fetch user when the hook is mounted
   useEffect(() => {
-    // Fetch user on mount
-    const fetchUser = async () => {
-      if (user === null) {
-        await refetch();
+    console.log('useEffect called');
+    const fetchUserOnMount = async () => {
+      if (!user) {
+        console.log('User is null, refetching...');
+        await refetchUser();
+      } else {
+        console.log('User already exists:', user);
       }
       setLoading(false);
+      console.log('Loading set to false');
     };
 
-    fetchUser();
+    fetchUserOnMount();
   }, [user]);
 
-  // Login function
+  // Handle login process
   const login = async (credentials) => {
+    console.log('Login function called with credentials:', credentials);
+
     try {
-      const response = await apiLogin(credentials);
-      const { token } = response;
-      console.log('Token received:', token); // Log token
-      localStorage.setItem('token', token);
-      await refetch(); // Refetch user data
+      const response = await loginUser(credentials);
+      console.log('Login response received:', response);
+
+      const { accessToken, refreshToken, role, user } = response;
+
+      console.log('Tokens received:', { accessToken, refreshToken, role });
+      console.log('Storing tokens in localStorage');
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+
+      console.log('Updating user state');
+      setUser(user);
+
+      console.log('Refetching user after login');
+      await refetchUser();
+
+      if (role === 'admin') {
+        console.log('Navigating to admin dashboard');
+        navigate('/admin/dashboard');
+      } else {
+        console.log('Navigating to user dashboard');
+        navigate('/user/dashboard');
+      }
+
+      console.log('Login process completed');
     } catch (error) {
-      console.error('Failed to login:', error);
-      throw error; // Re-throw the error to prevent redirect
+      console.error('Login failed:', error);
+      throw error;
     }
   };
 
-  // Logout function
+  // Handle logout process
   const logout = async () => {
+    console.log('Logout function called');
+
     const confirmLogout = window.confirm('Do you really want to logout?');
+    console.log('Logout confirmation:', confirmLogout);
+
     if (confirmLogout) {
       try {
         await logoutUser();
-        localStorage.removeItem('token');
-        setUser(null); // Clear user state
-        navigate('/login'); // Redirect to login
+        console.log('Logged out successfully');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        console.log('Tokens removed from localStorage');
+        setUser(null);
+        console.log('User state set to null');
+        navigate('/login');
+        console.log('Navigating to /login');
       } catch (error) {
-        console.error('Failed to logout:', error);
+        console.error('Logout failed:', error);
       }
-    } // No need for an else clause here
+    }
   };
 
-  // Update user data
-  const updateUser = async (newUser) => {
-    setUser(newUser);
+  // Update the user object
+  const updateUser = (user) => {
+    console.log('Updating user with new data:', user);
+    setUser(user);
+    console.log('User state updated');
   };
 
   return {
-    user,
     loading,
     refreshLoading,
-    logout,
     login,
+    logout,
     updateUser,
   };
 };

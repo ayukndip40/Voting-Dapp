@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const electionSchema = new Schema({
+  electionId: { type: String, required: true, unique: true },
   numericId: {
     type: Number,
     unique: true, // Ensure that the numeric ID is unique

@@ -137,8 +137,15 @@ const getCurrentUser = async (req, res) => {
       return res.status(400).json({ success: false, msg: 'Invalid user object' });
     }
 
+    const data = {
+      fullName: req.user.fullName,
+      email: req.user.email, // You can include other fields if needed
+      phoneNumber: req.user.phoneNumber,
+      NationalIDNumber:req.user.nationalId,
+    };
+
     // Return user fullName
-    res.json({ success: true, data: { fullName: req.user.fullName } });
+    res.json({ success: true, data });
   } catch (error) {
     console.error('Error fetching current user:', error);
     res.status(500).json({ success: false, msg: 'Server Error' });

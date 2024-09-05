@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { getElections } from '../../../api/electionApi';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import './ElectionLists.css';
+import './ElectionLists.css'; // Optional: you can use Tailwind only and remove this if not needed
 
 const PAGE_SIZE = 10;
 
@@ -20,22 +20,17 @@ const ElectionList = ({ onSelectElection }) => {
   useEffect(() => {
     const fetchElections = async () => {
       try {
-        console.log('Fetching elections...'); // Debugging
         const data = await getElections();
-        console.log('Fetched data:', data); // Debugging
         if (Array.isArray(data)) {
           setElections(data);
           setFilteredElections(data);
         } else {
           setError('Unexpected data format. Please contact support.');
-          console.error('Error: Unexpected data format', data); // Debugging
         }
       } catch (err) {
         setError(`Failed to fetch elections: ${err.message}`);
-        console.error('Fetch error:', err); // Debugging
       } finally {
         setLoading(false);
-        console.log('Loading complete'); // Debugging
       }
     };
 
@@ -43,27 +38,22 @@ const ElectionList = ({ onSelectElection }) => {
   }, []);
 
   useEffect(() => {
-    console.log('Search term changed:', searchTerm); // Debugging
     const results = elections.filter(election =>
       election.title.toLowerCase().includes(searchTerm.toLowerCase().trim())
     );
-    console.log('Filtered results:', results); // Debugging
     setFilteredElections(results);
     setCurrentPage(1);
   }, [searchTerm, elections]);
 
   const handleSearchChange = (e) => {
-    console.log('Search input changed:', e.target.value); // Debugging
     setSearchTerm(e.target.value);
   };
 
   const handlePageChange = (page) => {
-    console.log('Page changed to:', page); // Debugging
     setCurrentPage(page);
   };
 
   const handleElectionClick = (electionId) => {
-    console.log('Election selected:', electionId); // Debugging
     navigate(`/elections/${electionId}`); // Navigate to election details page
   };
 
@@ -71,44 +61,49 @@ const ElectionList = ({ onSelectElection }) => {
   const endIndex = startIndex + PAGE_SIZE;
   const paginatedElections = filteredElections.slice(startIndex, endIndex);
 
-  if (loading) return <div className="loading">Loading...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <div className="text-center py-4 text-gray-600">Loading...</div>;
+  if (error) return <div className="text-center py-4 text-red-600">{error}</div>;
 
   return (
-    <div className="election-list-container">
-      <h2>Select an Election</h2>
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Search by title"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="search-input"
-        />
-      </div>
-      <ul className="election-list">
-        {paginatedElections.length === 0 ? (
-          <div className="no-elections">No elections available at the moment.</div>
-        ) : (
-          paginatedElections.map(election => (
-            <li key={election.electionId} className="election-item">
-              <button onClick={() => handleElectionClick(election.electionId)}>
-                {election.title}
-              </button>
-            </li>
-          ))
-        )}
-      </ul>
-      <div className="pagination">
-        {Array.from({ length: Math.ceil(filteredElections.length / PAGE_SIZE) }).map((_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageChange(index + 1)}
-            className={`pagination-button ${currentPage === index + 1 ? 'active' : ''}`}
-          >
-            {index + 1}
-          </button>
-        ))}
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="bg-white shadow-md rounded-lg w-full max-w-lg p-6 h-auto min-h-[500px]">
+        <h2 className="text-2xl font-bold mb-4 text-center">Select an Election</h2>
+        <div className="mb-4 flex items-center">
+          <input
+            type="text"
+            placeholder="Search by title"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <ul className="space-y-4">
+          {paginatedElections.length === 0 ? (
+            <div className="text-center text-gray-500">No elections available at the moment.</div>
+          ) : (
+            paginatedElections.map(election => (
+              <li key={election.electionId} className="bg-gray-50 border rounded-lg shadow-sm overflow-hidden">
+                <button
+                  onClick={() => handleElectionClick(election.electionId)}
+                  className="w-full p-4 text-left text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {election.title}
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+        <div className="mt-6 flex justify-center space-x-2">
+          {Array.from({ length: Math.ceil(filteredElections.length / PAGE_SIZE) }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 rounded-lg border ${currentPage === index + 1 ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'} hover:bg-blue-100 transition duration-300`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

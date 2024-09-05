@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
-import { login as apiLogin } from '../../api/authApi';
-import './LoginPage.css';
+import { loginUser } from '../../api/authApi';
+import { EnvelopeIcon, KeyIcon } from '@heroicons/react/24/outline';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -11,7 +11,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login, updateUser } = useAuth(); // Update this line
+  const { login, updateUser } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +19,8 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await apiLogin({ email, password });
+      const credentials = { email, password };
+      const response = await loginUser(credentials);
 
       if (!response || typeof response !== 'object') {
         throw new Error('Unexpected response format');
@@ -31,14 +32,9 @@ const LoginPage = () => {
         throw new Error('Role is not included in the response');
       }
 
-      login(token); // Call the login function from useAuth
-      updateUser(user); // Update the user state using the correct function
+      login(credentials);
+      updateUser(user);
 
-      if (role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/user/dashboard');
-      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -47,34 +43,44 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-page">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      {error && <p className="error-message">{error}</p>}
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+            <EnvelopeIcon className="w-5 h-5 text-gray-400 mr-2" />
+            <input
+              type="email"
+              id="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 border-none focus:ring-0"
+              required
+            />
+          </div>
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+            <KeyIcon className="w-5 h-5 text-gray-400 mr-2" />
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-2 border-none focus:ring-0"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+          >
+            {isLoading ? 'Logging in...' : 'Login'}
+          </button>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+        </form>
+      </div>
     </div>
   );
 };

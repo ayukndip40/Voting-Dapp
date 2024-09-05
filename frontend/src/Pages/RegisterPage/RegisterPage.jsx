@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Updated import
+import { useNavigate } from 'react-router-dom';
 import { register } from '../../api/authApi';
-import './RegisterPage.css';
+import { UserIcon, EnvelopeIcon, KeyIcon, PhoneIcon, IdentificationIcon } from '@heroicons/react/24/outline';
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
@@ -13,7 +13,7 @@ const RegisterPage = () => {
   const [role, setRole] = useState('user');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Updated hook
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ const RegisterPage = () => {
 
     try {
       await register({ fullName, email, password, phoneNumber, nationalId, role });
-      navigate('/login'); // Updated navigation
+      navigate('/login');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -31,75 +31,92 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="register-page">
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="fullName">Full Name</label>
-          <input
-            type="text"
-            id="fullName"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="phoneNumber">Phone Number</label>
-          <input
-            type="tel"
-            id="phoneNumber"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="nationalId">National ID</label>
-          <input
-            type="text"
-            id="nationalId"
-            value={nationalId}
-            onChange={(e) => setNationalId(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="role">Role</label>
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+      <div className="w-full max-w-lg bg-white p-8 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-semibold mb-6 text-center">Register</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+            <UserIcon className="w-5 h-5 text-gray-400 mr-2" />
+            <input
+              type="text"
+              id="fullName"
+              placeholder="Full Name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full p-2 border-none focus:ring-0"
+              required
+            />
+          </div>
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+             <EnvelopeIcon className="w-5 h-5 text-gray-400 mr-2" />
+            <input
+              type="email"
+              id="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 border-none focus:ring-0"
+              required
+            />
+          </div>
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+            <KeyIcon className="w-5 h-5 text-gray-400 mr-2" />
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-2 border-none focus:ring-0"
+              required
+            />
+          </div>
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+            <PhoneIcon className="w-5 h-5 text-gray-400 mr-2" />
+            <input
+              type="tel"
+              id="phoneNumber"
+              placeholder="Phone Number"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="w-full p-2 border-none focus:ring-0"
+              required
+            />
+          </div>
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+            <IdentificationIcon className="w-5 h-5 text-gray-400 mr-2" />
+            <input
+              type="text"
+              id="nationalId"
+              placeholder="National ID"
+              value={nationalId}
+              onChange={(e) => setNationalId(e.target.value)}
+              className="w-full p-2 border-none focus:ring-0"
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="role" className="mb-2 text-sm text-gray-700">Role</label>
+            <select
+              id="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="p-2 border border-gray-300 rounded-md focus:ring-0"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
           >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Registering...' : 'Register'}
-        </button>
-      </form>
-      {error && <p className="error-message">{error}</p>}
+            {isLoading ? 'Registering...' : 'Register'}
+          </button>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+        </form>
+      </div>
     </div>
   );
 };

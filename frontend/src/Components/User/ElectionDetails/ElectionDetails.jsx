@@ -1,9 +1,9 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { getElectionById } from '../../../api/electionApi';
 import VoteForm from '../VoteForm/VoteForm';
-import './ElectionDetails.css'; // Import specific styles for the Election Details
 
 const ElectionDetails = ({ electionId }) => {
   const [election, setElection] = useState(null);
@@ -13,19 +13,15 @@ const ElectionDetails = ({ electionId }) => {
   useEffect(() => {
     const fetchElection = async () => {
       try {
-        console.log('Fetching election with ID:', electionId); // Debugging: Log the election ID being fetched
+        console.log('Fetching election with ID:', electionId);
         const result = await getElectionById(electionId);
-        console.log('Fetched election data:', result); // Debugging: Log the fetched election data
-
-        if (result && result.electionId) { // Adjust based on your response structure
+        if (result && result.electionId) {
           setElection(result);
         } else {
           setError('Election not found.');
-          console.error('Error: Election not found in the response:', result);
         }
       } catch (err) {
         setError(`Failed to fetch election details: ${err.message}`);
-        console.error('Fetch error:', err); // Debugging: Log fetch error
       } finally {
         setLoading(false);
       }
@@ -41,26 +37,38 @@ const ElectionDetails = ({ electionId }) => {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit',
       timeZoneName: 'short',
     };
     return new Date(dateTimeString).toLocaleString('en-US', options);
   };
 
-  if (loading) return <div className="loading">Loading...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (loading) return <div className="text-center text-gray-500 py-4">Loading...</div>;
+  if (error) return <div className="text-center text-red-500 py-4">{error}</div>;
 
   return (
-    <div className="election-details">
-      <h1>{election.title}</h1>
-      <p>{election.description}</p>
-      <p>
-        <strong>Start Date:</strong> {formatDateTime(election.startDate)}
-      </p>
-      <p>
-        <strong>End Date:</strong> {formatDateTime(election.endDate)}
-      </p>
-      <VoteForm electionId={election.electionId} candidates={election.candidates} />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-100 to-gray-200 py-10">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl p-8">
+        <div className="border-b border-gray-200 pb-4 mb-6">
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">{election.title}</h1>
+          <p className="text-lg text-gray-600">{election.description}</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6 mb-8">
+          <div className="bg-blue-50 rounded-md p-4 shadow-sm">
+            <p className="text-sm font-semibold text-gray-600">Start Date</p>
+            <p className="text-xl font-medium text-gray-800">{formatDateTime(election.startDate)}</p>
+          </div>
+          <div className="bg-red-50 rounded-md p-4 shadow-sm">
+            <p className="text-sm font-semibold text-gray-600">End Date</p>
+            <p className="text-xl font-medium text-gray-800">{formatDateTime(election.endDate)}</p>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-6 rounded-md shadow-md">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Vote Now</h2>
+          <VoteForm electionId={election.electionId} candidates={election.candidates} />
+        </div>
+      </div>
     </div>
   );
 };

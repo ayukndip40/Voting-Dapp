@@ -3,6 +3,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './Context/AuthContext';
 import Header from './Components/common/Header/Header';
 import Footer from './Components/common/Footer/Footer';
 import HomePage from './Pages/HomePage/HomePage';
@@ -16,9 +17,12 @@ import ManageElections from './Components/admin/ManageElections/ManageElections'
 import ManageCandidates from './Components/admin/ManageCandidates/ManageCanadidates';
 import ElectionDetails from './Components/User/ElectionDetails/ElectionDetails';
 import ResultPage from './Components/results/ResultsPage';
+import Dashboard from './Components/DashboardRoute';
+import Profile from './Components/ProfilePage';
 const App = () => {
   return (
-    <Router>
+    <AuthProvider>
+      <Router>
       <Header />
       <main>
         <Routes>
@@ -27,6 +31,22 @@ const App = () => {
           <Route path='/login' element={<LoginPage />} />
           
           {/* Protected Routes */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            } 
+          />
           <Route 
             path="/user/dashboard" 
             element={
@@ -81,6 +101,7 @@ const App = () => {
       </main>
       <Footer />
     </Router>
+    </AuthProvider>
   );
 };
 
