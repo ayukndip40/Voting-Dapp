@@ -4,6 +4,22 @@ import { useNavigate } from 'react-router-dom';
 import { register } from '../../api/authApi';
 import { UserIcon, EnvelopeIcon, KeyIcon, PhoneIcon, IdentificationIcon } from '@heroicons/react/24/outline';
 
+const Spinner = () => (
+  <svg
+    className="w-6 h-6 border-t-2 border-blue-600 border-solid rounded-full"
+    style={{
+      animation: 'spin 4s linear infinite', // Adjust the duration to make it slower (4s for slower spinning)
+    }}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+  >
+    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+  </svg>
+);
+
+
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -48,7 +64,7 @@ const RegisterPage = () => {
             />
           </div>
           <div className="flex items-center border border-gray-300 rounded-md p-2">
-             <EnvelopeIcon className="w-5 h-5 text-gray-400 mr-2" />
+            <EnvelopeIcon className="w-5 h-5 text-gray-400 mr-2" />
             <input
               type="email"
               id="email"
@@ -110,9 +126,16 @@ const RegisterPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 flex items-center justify-center"
           >
-            {isLoading ? 'Registering...' : 'Register'}
+            {isLoading ? (
+              <>
+                <Spinner />
+                <span className="ml-2">Registering...</span>
+              </>
+            ) : (
+              'Register'
+            )}
           </button>
           {error && <p className="text-red-500 text-center">{error}</p>}
         </form>

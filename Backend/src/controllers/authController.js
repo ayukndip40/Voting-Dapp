@@ -142,6 +142,7 @@ const getCurrentUser = async (req, res) => {
       email: req.user.email, // You can include other fields if needed
       phoneNumber: req.user.phoneNumber,
       NationalIDNumber:req.user.nationalId,
+      role:req.user.role,
     };
 
     // Return user fullName

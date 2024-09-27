@@ -20,6 +20,7 @@
     "react-dom": "^18.2.0",
     "react-minimal-pie-chart": "^8.4.0",
     "react-router-dom": "^6.25.1",
+    "react-toastify": "^10.0.5",
     "sweetalert2": "^11.12.3"
   },
   "devDependencies": {

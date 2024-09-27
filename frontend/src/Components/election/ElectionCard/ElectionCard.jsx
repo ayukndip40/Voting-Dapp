@@ -2,7 +2,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { CalendarIcon, PencilIcon } from '@heroicons/react/24/outline'; // Importing relevant icons
-import './ElectionCard.css'; // Import relevant CSS
 
 const ElectionCard = ({ election, onEdit }) => {
   const formatDateTime = (dateTimeString) => {
@@ -14,7 +13,7 @@ const ElectionCard = ({ election, onEdit }) => {
       minute: '2-digit',
       timeZoneName: 'short',
     };
-    return new Date(dateTimeString).toLocaleString('en-US', options);
+    return new Date(dateTimeString).toLocaleString('en-CM', options);
   };
 
   return (

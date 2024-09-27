@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
-import './UpdateElectionForm.css'; // Import specific styles for the Update Election Form
+
 
 const UpdateElectionForm = ({ election, onUpdateElection }) => {
   const [formData, setFormData] = useState({

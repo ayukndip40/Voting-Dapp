@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { getElectionById } from '../../../api/electionApi';
 import VoteForm from '../VoteForm/VoteForm';
+import { CalendarIcon, ClockIcon } from '@heroicons/react/24/outline';
 
 const ElectionDetails = ({ electionId }) => {
   const [election, setElection] = useState(null);
@@ -13,7 +14,6 @@ const ElectionDetails = ({ electionId }) => {
   useEffect(() => {
     const fetchElection = async () => {
       try {
-        console.log('Fetching election with ID:', electionId);
         const result = await getElectionById(electionId);
         if (result && result.electionId) {
           setElection(result);
@@ -39,7 +39,7 @@ const ElectionDetails = ({ electionId }) => {
       minute: '2-digit',
       timeZoneName: 'short',
     };
-    return new Date(dateTimeString).toLocaleString('en-US', options);
+    return new Date(dateTimeString).toLocaleString('en-CM', options);
   };
 
   if (loading) return <div className="text-center text-gray-500 py-4">Loading...</div>;
@@ -54,19 +54,25 @@ const ElectionDetails = ({ electionId }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-6 mb-8">
-          <div className="bg-blue-50 rounded-md p-4 shadow-sm">
-            <p className="text-sm font-semibold text-gray-600">Start Date</p>
+          <div className="bg-blue-50 rounded-md p-4 shadow-sm transition-transform transform hover:scale-105">
+            <div className="flex items-center">
+              <CalendarIcon className="w-6 h-6 text-blue-600 mr-2" />
+              <p className="text-sm font-semibold text-gray-600">Start Date</p>
+            </div>
             <p className="text-xl font-medium text-gray-800">{formatDateTime(election.startDate)}</p>
           </div>
-          <div className="bg-red-50 rounded-md p-4 shadow-sm">
-            <p className="text-sm font-semibold text-gray-600">End Date</p>
+          <div className="bg-red-50 rounded-md p-4 shadow-sm transition-transform transform hover:scale-105">
+            <div className="flex items-center">
+              <ClockIcon className="w-6 h-6 text-red-600 mr-2" />
+              <p className="text-sm font-semibold text-gray-600">End Date</p>
+            </div>
             <p className="text-xl font-medium text-gray-800">{formatDateTime(election.endDate)}</p>
           </div>
         </div>
 
         <div className="bg-gray-50 p-6 rounded-md shadow-md">
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">Vote Now</h2>
-          <VoteForm electionId={election.electionId} candidates={election.candidates} />
+          <VoteForm electionId={election.electionId} candidates={election.candidates} isElectionActive={election.isActive}/>
         </div>
       </div>
     </div>

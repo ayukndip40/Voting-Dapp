@@ -16,7 +16,7 @@ const NavLink = ({ to, icon: Icon, children, onClick }) => (
   <li>
     <Link
       to={to}
-      className="text-gray-700 hover:text-blue-500 flex items-center"
+      className="text-gray-700 hover:text-blue-500 flex items-center transition duration-300 ease-in-out transform hover:scale-105"
       onClick={onClick}
     >
       <Icon className="w-5 h-5 mr-2" />
@@ -33,10 +33,10 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-gradient-to-r from-blue-500 to-purple-600 shadow-md">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
-        <Link to="/" className="text-2xl font-bold text-blue-600 flex items-center">
-          <CubeTransparentIcon className="w-8 h-8 text-blue-600 mr-2" />
+        <Link to="/" className="text-2xl font-bold text-white flex items-center transition duration-300 ease-in-out transform hover:scale-110">
+          <CubeTransparentIcon className="w-8 h-8 text-white mr-2" />
           BlockVote
         </Link>
         <nav>

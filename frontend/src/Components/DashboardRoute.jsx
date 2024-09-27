@@ -7,14 +7,20 @@ import AdminDashboard from '../Components/admin/Dashboard/Dashboard'; // Adjust 
 import UserDashboard from '../Components/User/Dashboard/Dashboard'; // Adjust the import path as needed
 
 const DashboardRoute = () => {
-  const { updateUser } = useAuth();
+  const { user, loading } = useAuth(); // Also check for loading
 
-  if (!updateUser) {
+  // Show a loading indicator while fetching user data
+  if (loading) {
+    return <div>Loading...</div>; // You can customize this as needed
+  }
+
+  // Redirect to login if the user is not authenticated
+  if (!user) {
     return <Navigate to="/login" />;
   }
 
-  // Render the dashboard based on user role
-  return updateUser.role === 'admin' ? <AdminDashboard /> : <UserDashboard />;
+  // Render the correct dashboard based on the user's role
+  return user.role === 'admin' ? <AdminDashboard /> : <UserDashboard />;
 };
 
 export default DashboardRoute;

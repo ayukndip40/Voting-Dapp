@@ -5,6 +5,22 @@ import useAuth from '../../hooks/useAuth';
 import { loginUser } from '../../api/authApi';
 import { EnvelopeIcon, KeyIcon } from '@heroicons/react/24/outline';
 
+const Spinner = () => (
+  <svg
+    className="animate-spin h-5 w-5 text-white mx-auto"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+  >
+    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+    <path
+      className="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 0116 0A8 8 0 014 12z"
+    />
+  </svg>
+);
+
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,6 +29,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { login, updateUser } = useAuth();
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -26,7 +43,7 @@ const LoginPage = () => {
         throw new Error('Unexpected response format');
       }
 
-      const { token, role, user } = response;
+      const { role, user } = response;
 
       if (role === undefined) {
         throw new Error('Role is not included in the response');
@@ -34,6 +51,9 @@ const LoginPage = () => {
 
       login(credentials);
       updateUser(user);
+
+      // Refresh the page after successful login
+      //window.location.reload();
 
     } catch (err) {
       setError(err.message);
@@ -74,9 +94,9 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 flex items-center justify-center"
           >
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? <Spinner /> : 'Login'}
           </button>
           {error && <p className="text-red-500 text-center">{error}</p>}
         </form>

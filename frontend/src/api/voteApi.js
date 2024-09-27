@@ -51,7 +51,24 @@ export const getElectionResults = async (electionId) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching election results:', error.response ? error.response.data : error.message);
-    throw new Error(error.response?.data?.message || 'Failed to fetch election results');
+
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      if (error.response.status === 400 && error.response.data.msg === 'Election is still active or voting has not ended yet') {
+        return { results: null, message: 'Election is still active or voting has not ended yet' };
+      } else if (error.response.status === 404) {
+        return { results: null, message: 'Election not found' };
+      } else {
+        throw new Error(`Server error: ${error.response.data.msg || error.response.data.message || 'Unknown error'}`);
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      throw new Error('Network error: Unable to reach the server');
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw new Error(`Request setup error: ${error.message}`);
+    }
   }
 };
 

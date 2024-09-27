@@ -1,21 +1,43 @@
+/* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
-import { getElectionResults } from '../../api/voteApi';
-import { getElections } from '../../api/electionApi';
-import { ChartBarIcon, CheckCircleIcon, XCircleIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from "react";
+import { getElectionResults } from "../../api/voteApi";
+import { getElections } from "../../api/electionApi";
+import {
+  ChartBarIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  ClipboardDocumentListIcon,
+} from "@heroicons/react/24/outline";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ResultsPage = ({ results }) => {
-  const maxVoteCount = Math.max(...results.map(result => result.voteCount), 1);
+  // Convert results object into an array for easier mapping
+  const formattedResults = Object.entries(results).map(([key, value]) => ({
+    name: value.name,
+    voteCount: Number(value.voteCount), // Convert voteCount to number
+  }));
+
+  const maxVoteCount = Math.max(
+    ...formattedResults.map((result) => result.voteCount),
+    1
+  );
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto max-h-[400px]">
-      {results.map((result, index) => {
-        const color = `hsl(${(index * 360) / results.length}, 70%, 50%)`;
+      {formattedResults.map((result, index) => {
+        const color = `hsl(${
+          (index * 360) / formattedResults.length
+        }, 70%, 50%)`;
         const barWidth = `${(result.voteCount / maxVoteCount) * 100}%`;
 
         return (
-          <div key={result.candidateId} className="p-4 bg-white rounded-lg shadow-lg h-40 flex flex-col justify-between">
+          <div
+            key={index}
+            className="p-4 bg-white rounded-lg shadow-lg h-40 flex flex-col justify-between"
+          >
             <div className="flex items-center justify-between">
               <h4 className="text-xl font-semibold">{result.name}</h4>
               <div className="flex items-center space-x-2">
@@ -38,11 +60,11 @@ const ResultsPage = ({ results }) => {
 
 const ResultPage = () => {
   const [elections, setElections] = useState([]);
-  const [selectedElectionId, setSelectedElectionId] = useState('');
+  const [selectedElectionId, setSelectedElectionId] = useState("");
   const [election, setElection] = useState(null);
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchElections = async () => {
@@ -50,7 +72,8 @@ const ResultPage = () => {
         const response = await getElections();
         setElections(response || []);
       } catch (err) {
-        setError('Failed to fetch elections.');
+        setMessage("Failed to fetch elections.");
+        toast.error("Failed to fetch elections.");
       }
     };
     fetchElections();
@@ -58,29 +81,55 @@ const ResultPage = () => {
 
   const handleGetResults = async () => {
     if (!selectedElectionId) {
-      setError('Please select an election.');
+      setMessage("Please select an election.");
+      toast.warn("Please select an election.");
       return;
     }
 
     setLoading(true);
-    setError(null);
+    setMessage("");
 
     try {
       const result = await getElectionResults(selectedElectionId);
-      const electionData = result.election || {};
-      const candidatesData = result.results || [];
 
-      const formattedStartDate = new Date(Number(electionData.startDate) * 1000).toLocaleDateString();
-      const formattedEndDate = new Date(Number(electionData.endDate) * 1000).toLocaleDateString();
+      if (result.results === null) {
+        setMessage(result.message);
+        toast.info(result.message);
+        setElection(null);
+        setCandidates([]);
+      } else {
+        const electionData = result.election || {};
+        const candidatesData = result.results || [];
 
-      setElection({
-        ...electionData,
-        startDate: formattedStartDate,
-        endDate: formattedEndDate
-      });
-      setCandidates(candidatesData);
+        // Check if startDate and endDate are valid
+        const startDateTimestamp = Number(electionData.startDate);
+        const endDateTimestamp = Number(electionData.endDate);
+
+        // Log the timestamps for debugging
+        console.log("Start Date Timestamp:", startDateTimestamp);
+        console.log("End Date Timestamp:", endDateTimestamp);
+
+        const formattedStartDate = isNaN(startDateTimestamp)
+          ? "Invalid Date"
+          : new Date(startDateTimestamp * 1000).toLocaleDateString();
+        const formattedEndDate = isNaN(endDateTimestamp)
+          ? "Invalid Date"
+          : new Date(endDateTimestamp * 1000).toLocaleDateString();
+
+        setElection({
+          ...electionData,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+        });
+        setCandidates(candidatesData);
+        setMessage("");
+        toast.success("Results fetched successfully!");
+      }
     } catch (error) {
-      setError('Failed to fetch election results.');
+      setMessage(error.message);
+      toast.error(error.message);
+      setElection(null);
+      setCandidates([]);
     } finally {
       setLoading(false);
     }
@@ -88,11 +137,15 @@ const ResultPage = () => {
 
   return (
     <div className="container mx-auto max-w-4xl p-4 mt-6 bg-gray-100 rounded-lg shadow-lg">
+      <ToastContainer />
       <h2 className="text-3xl font-bold text-center mb-6">Election Results</h2>
 
       <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6 mb-6">
         <div className="w-full">
-          <label htmlFor="election-select" className="block font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="election-select"
+            className="block font-medium text-gray-700 mb-2"
+          >
             Select Election:
           </label>
           <select
@@ -114,27 +167,75 @@ const ResultPage = () => {
           disabled={loading}
           className="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 disabled:bg-gray-400"
         >
-          {loading ? 'Loading...' : 'Get Results'}
+          {loading ? (
+            <div className="flex items-center space-x-2">
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+              <span>Loading...</span>
+            </div>
+          ) : (
+            "Get Results"
+          )}
         </button>
       </div>
 
-      {error && (
-        <div className="text-red-500 flex items-center space-x-2 mb-4">
-          <XCircleIcon className="h-6 w-6" />
-          <span>{error}</span>
+      {message && (
+        <div
+          className={`flex items-center space-x-2 mb-4 ${
+            message.includes("Failed") ? "text-red-500" : "text-blue-500"
+          }`}
+        >
+          {message.includes("Failed") ? (
+            <XCircleIcon className="h-6 w-6" />
+          ) : (
+            <CheckCircleIcon className="h-6 w-6" />
+          )}
+          <span>{message}</span>
         </div>
       )}
 
       {election && (
-        <div className="bg-gray-50 p-4 rounded-lg shadow-md mb-6">
-          <h3 className="text-xl font-semibold">{election.title}</h3>
-          <p className="text-gray-700">Start Date: {election.startDate}</p>
-          <p className="text-gray-700">End Date: {election.endDate}</p>
-          <p className="text-gray-700">Total Votes: {election.totalVotes}</p>
+        <div className="bg-white p-6 rounded-lg shadow-lg mb-6 transition-transform duration-300 hover:shadow-xl">
+          <h3 className="text-2xl font-bold text-gray-800 mb-2 hover:text-blue-600 transition-colors duration-300">
+            {election.title}
+          </h3>
+          <p className="text-gray-600 text-md mb-1">
+            <span className="font-semibold">Start Date:</span>
+            {election.startDate}
+          </p>
+          <p className="text-gray-600 text-md mb-1">
+            <span className="font-semibold">End Date:</span>
+            {election.endDate}
+          </p>
+          <div className="mt-4">
+            <button className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
+              View Details
+            </button>
+          </div>
         </div>
       )}
 
-      {candidates.length > 0 && <ResultsPage results={candidates} />}
+      {Object.keys(candidates).length > 0 && (
+        <ResultsPage results={candidates} />
+      )}
     </div>
   );
 };

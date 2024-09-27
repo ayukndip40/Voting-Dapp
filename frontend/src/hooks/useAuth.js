@@ -16,7 +16,7 @@ const useAuth = () => {
   console.log('Initial refreshLoading state:', refreshLoading);
 
   const navigate = useNavigate();
-  console.log('useNavigate hook called');
+  console.log('useNavigate hook initialized');
 
   // Refetch user data
   const refetchUser = async () => {
@@ -27,8 +27,14 @@ const useAuth = () => {
     try {
       const currentUser = await getCurrentUser();
       console.log('Current user fetched:', currentUser);
-      setUser(currentUser);
-      console.log('User state updated:', currentUser);
+      const role = localStorage.getItem('role'); // Fetch role from localStorage
+      if (role) {
+        setUser({ ...currentUser, role });
+        console.log('User state updated with role:', { ...currentUser, role });
+      } else {
+        setUser(currentUser);
+        console.log('User state updated without role:', currentUser);
+      }
     } catch (error) {
       console.error('Error fetching current user:', error);
       if (error.message === 'Invalid or expired token') {
@@ -46,7 +52,7 @@ const useAuth = () => {
 
   // Fetch user when the hook is mounted
   useEffect(() => {
-    console.log('useEffect called');
+    console.log('useEffect called - component mounted');
     const fetchUserOnMount = async () => {
       if (!user) {
         console.log('User is null, refetching...');
@@ -55,7 +61,7 @@ const useAuth = () => {
         console.log('User already exists:', user);
       }
       setLoading(false);
-      console.log('Loading set to false');
+      console.log('Loading state set to false');
     };
 
     fetchUserOnMount();
@@ -70,14 +76,15 @@ const useAuth = () => {
       console.log('Login response received:', response);
 
       const { accessToken, refreshToken, role, user } = response;
+      console.log('Tokens and user role received:', { accessToken, refreshToken, role });
 
-      console.log('Tokens received:', { accessToken, refreshToken, role });
-      console.log('Storing tokens in localStorage');
+      console.log('Storing tokens and role in localStorage');
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('role', role);
 
-      console.log('Updating user state');
-      setUser(user);
+      console.log('Updating user state with role');
+      setUser({ ...user, role });
 
       console.log('Refetching user after login');
       await refetchUser();
@@ -110,7 +117,8 @@ const useAuth = () => {
         console.log('Logged out successfully');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        console.log('Tokens removed from localStorage');
+        localStorage.removeItem('role');
+        console.log('Tokens and role removed from localStorage');
         setUser(null);
         console.log('User state set to null');
         navigate('/login');
@@ -122,13 +130,14 @@ const useAuth = () => {
   };
 
   // Update the user object
-  const updateUser = (user) => {
-    console.log('Updating user with new data:', user);
-    setUser(user);
+  const updateUser = (newUser) => {
+    console.log('Updating user with new data:', newUser);
+    setUser(newUser);
     console.log('User state updated');
   };
 
   return {
+    user,
     loading,
     refreshLoading,
     login,

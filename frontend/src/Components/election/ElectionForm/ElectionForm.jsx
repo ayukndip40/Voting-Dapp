@@ -13,6 +13,7 @@ const ElectionForm = ({ onCreateElection }) => {
     endDate: '',
     endTime: '',
   });
+  const [loading, setLoading] = useState(false);
 
   // Handler for form input changes
   const handleChange = (field) => (event) => {
@@ -22,15 +23,20 @@ const ElectionForm = ({ onCreateElection }) => {
   // Handler for form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true); // Start loading state
+
     const { startDate, startTime, endDate, endTime } = formData;
-    // Combine date and time fields
     const startDateTime = `${startDate}T${startTime}`;
     const endDateTime = `${endDate}T${endTime}`;
-    onCreateElection({
+
+    await onCreateElection({
       ...formData,
       startDate: startDateTime,
       endDate: endDateTime,
     });
+
+    // Refresh the page after creating the election
+    window.location.reload();
   };
 
   return (
@@ -125,8 +131,19 @@ const ElectionForm = ({ onCreateElection }) => {
         <button
           type="submit"
           className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={loading}
         >
-          Create Election
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              Creating...
+            </div>
+          ) : (
+            'Create Election'
+          )}
         </button>
       </form>
     </div>

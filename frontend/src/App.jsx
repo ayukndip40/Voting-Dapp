@@ -3,7 +3,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './Context/AuthContext';
 import Header from './Components/common/Header/Header';
 import Footer from './Components/common/Footer/Footer';
 import HomePage from './Pages/HomePage/HomePage';
@@ -21,7 +20,7 @@ import Dashboard from './Components/DashboardRoute';
 import Profile from './Components/ProfilePage';
 const App = () => {
   return (
-    <AuthProvider>
+    
       <Router>
       <Header />
       <main>
@@ -101,7 +100,7 @@ const App = () => {
       </main>
       <Footer />
     </Router>
-    </AuthProvider>
+    
   );
 };
 

@@ -32,7 +32,7 @@ const createWallet = async () => {
 
     // Verify if the central wallet has enough balance
     console.log('Verifying if the central wallet has enough balance...');
-    const amountToSend = ethers.parseEther('10.0'); // Amount in ETH
+    const amountToSend = ethers.parseEther('5.0'); // Amount in ETH
     console.log(`Amount to send: ${ethers.formatEther(amountToSend)} ETH`);
 
     if (centralWalletBalance < amountToSend) {

@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import { getElections } from '../../../api/electionApi';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import './ElectionLists.css'; // Optional: you can use Tailwind only and remove this if not needed
 
 const PAGE_SIZE = 10;
 
