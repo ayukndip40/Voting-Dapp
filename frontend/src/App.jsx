@@ -1,106 +1,115 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './Components/common/Header/Header';
-import Footer from './Components/common/Footer/Footer';
-import HomePage from './Pages/HomePage/HomePage';
-import RegisterPage from './Pages/RegisterPage/RegisterPage';
-import LoginPage from './Pages/LoginPage/LoginPage';
-import UserDashboard from './Components/User/Dashboard/Dashboard';
-import PrivateRoute from './Components/PrivateRoute';
-import ElectionsList from './Components/election/ElectionLists/ElectionLists';
-import AdminDashboard from './Components/admin/Dashboard/Dashboard';
-import ManageElections from './Components/admin/ManageElections/ManageElections';
-import ManageCandidates from './Components/admin/ManageCandidates/ManageCanadidates';
-import ElectionDetails from './Components/User/ElectionDetails/ElectionDetails';
-import ResultPage from './Components/results/ResultsPage';
-import Dashboard from './Components/DashboardRoute';
-import Profile from './Components/ProfilePage';
+import React from "react";
+import { useParams } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Header from "./Components/common/Header/Header";
+import Footer from "./Components/common/Footer/Footer";
+import HomePage from "./Pages/HomePage/HomePage";
+import RegisterPage from "./Pages/RegisterPage/RegisterPage";
+import LoginPage from "./Pages/LoginPage/LoginPage";
+import UserDashboard from "./Components/User/Dashboard/Dashboard";
+import PrivateRoute from "./Components/PrivateRoute";
+import ElectionsList from "./Components/election/ElectionLists/ElectionLists";
+import AdminDashboard from "./Components/admin/Dashboard/Dashboard";
+import ManageElections from "./Components/admin/ManageElections/ManageElections";
+import ManageCandidates from "./Components/admin/ManageCandidates/ManageCanadidates";
+import ElectionDetails from "./Components/User/ElectionDetails/ElectionDetails";
+import ResultPage from "./Components/results/ResultsPage";
+import Dashboard from "./Components/DashboardRoute";
+import Profile from "./Components/ProfilePage";
 const App = () => {
   return (
-    
-      <Router>
+    <Router>
       <Header />
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path='/register' element={<RegisterPage />} />
-          <Route path='/login' element={<LoginPage />} />
-          
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+
           {/* Protected Routes */}
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <PrivateRoute>
                 <Dashboard />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/profile" 
+          <Route
+            path="/profile"
             element={
               <PrivateRoute>
                 <Profile />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/user/dashboard" 
+          <Route
+            path="/user/dashboard"
             element={
               <PrivateRoute>
                 <UserDashboard />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/user/elections" 
+          <Route
+            path="/user/elections"
             element={
               <PrivateRoute>
                 <ElectionsList />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/admin/dashboard" 
+          <Route
+            path="/admin/dashboard"
             element={
               <PrivateRoute>
                 <AdminDashboard />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/admin/manage-elections" 
+          <Route
+            path="/admin/manage-elections"
             element={
               <PrivateRoute>
                 <ManageElections />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path='/admin/manage-candidates' 
+          <Route
+            path="/admin/manage-candidates"
             element={
               <PrivateRoute>
                 <ManageCandidates />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path='/admin/view-results' 
+          <Route
+            path="/admin/view-results"
             element={
               <PrivateRoute>
                 <ResultPage />
               </PrivateRoute>
-            } 
+            }
           />
-          
-          <Route path="/elections/:electionId" element={<ElectionDetailsWrapper />} />
+          <Route
+            path="/user/view-results"
+            element={
+              <PrivateRoute>
+                <ResultPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/elections/:electionId"
+            element={<ElectionDetailsWrapper />}
+          />
         </Routes>
       </main>
       <Footer />
     </Router>
-    
   );
 };
 

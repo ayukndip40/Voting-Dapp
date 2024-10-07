@@ -21,6 +21,18 @@ contract Voting {
         bool isActive;
     }
 
+    struct VoteRecord {
+        address voterAddress;      // Voter's public address
+        uint256 electionId;       // Unique identifier for the election
+        string electionName;       // Name of the election
+        uint256 electionDate;      // Date of the election
+        uint256 candidateId;       // Unique identifier for the candidate
+        string candidateName;      // Name of the candidate
+        uint256 timestamp;         // When the vote was cast
+        bool confirmationStatus;   // Vote confirmation status
+        bytes32 transactionHash;    // Transaction hash of the vote
+    }
+
     // ========================================
     // |             State Variables          |
     // ========================================
@@ -39,6 +51,8 @@ contract Voting {
 
     // Counter for the next Election ID
     uint public nextElectionId;
+
+    mapping(address => VoteRecord[]) public votingHistory;
 
     // ========================================
     // |                Events                |
@@ -65,13 +79,15 @@ contract Voting {
     event CandidateIndexFound(uint indexed electionId, uint candidateId, uint candidateIndex);
     event VoteCountIncremented(uint indexed electionId, uint candidateId, uint newVoteCount);
     event VoterMarked(uint indexed electionId, address indexed voter);
-    event VoteCasted(uint indexed electionId, uint indexed candidateId, address indexed voter);
-    event VoteCastedEvent(uint indexed electionId, uint indexed candidateId, address indexed voter);
+    event VoteCasted(uint indexed electionId, uint indexed candidateId, address indexed voter, uint256 timestamp);
+    event VoteCastedEvent(uint indexed electionId, uint indexed candidateId, address indexed voter, uint256 timestamp);
     event ElectionNotStarted(uint electionId, string message);
     event ElectionNotActive(uint electionId, string message);
     event VotingEnded(uint electionId, string message);
     event CandidateDoesNotExist(uint electionId, uint candidateId);
     event AlreadyVoted(uint electionId, address voter);
+    event AlreadyVotedMessage(uint electionId, address voter);
+
 
     // ========================================
     // |               Constructor            |
@@ -287,8 +303,8 @@ contract Voting {
      * @param _electionId The ID of the election.
      * @param _candidateId The ID of the candidate to vote for.
      */
-    function castVote(uint _electionId, uint _candidateId) public {
-    emit VoteCastingInitiated(_electionId, _candidateId, msg.sender);
+    function castVote(address _voter, uint _electionId, uint _candidateId) public returns (bool success, string memory message) {
+    emit VoteCastingInitiated(_electionId, _candidateId, _voter);
 
     // Retrieve the election and candidates
     Election storage election = elections[_electionId];
@@ -298,29 +314,59 @@ contract Voting {
     emit CandidatesRetrieved(_electionId, electionCandidates.length);
 
     // Ensure the election is active
-    require(election.isActive, "Election is not active");
+    if (!election.isActive) {
+        emit ElectionStatusChecked(_electionId, election.isActive);
+        return (false, "Election is not active");
+    }
     emit ElectionStatusChecked(_electionId, election.isActive);
 
     // Ensure the current time is within the voting period
     uint currentTimestamp = block.timestamp;
     emit VotingPeriodChecked(_electionId, currentTimestamp, election.startDate, election.endDate);
     
-    require(currentTimestamp >= election.startDate, "Voting has not started");
-    require(currentTimestamp <= election.endDate, "Voting has ended");
+    if (currentTimestamp < election.startDate) {
+        return (false, "Voting has not started");
+    }
+    if (currentTimestamp > election.endDate) {
+        return (false, "Voting has ended");
+    }
 
     // Check if the sender has already voted
-    if (votes[_electionId][msg.sender]) {
-        emit VoterEligibilityChecked(_electionId, msg.sender, true); // Voter has already voted
-        revert("Voter has already voted");
-    } else {
-        emit VoterEligibilityChecked(_electionId, msg.sender, false); // Voter is eligible to vote
+    if (votes[_electionId][_voter]) {
+        emit VoterEligibilityChecked(_electionId, _voter, true); // Voter has already voted
+        emit AlreadyVotedMessage(_electionId, _voter);
+        return (false, "Voter has already voted");
     }
+
+    // If we've reached here, the voter is eligible to vote
+    emit VoterEligibilityChecked(_electionId, _voter, false);
+
+    // Simulate the transaction hash
+    bytes32 simulatedTransactionHash = keccak256(abi.encodePacked(_voter, _electionId, _candidateId, block.timestamp));
+
+    // Record the vote
+    VoteRecord memory newVote = VoteRecord({
+        voterAddress: _voter,
+        electionId: _electionId,
+        electionName: election.title,
+        electionDate: election.startDate,
+        candidateId: _candidateId,
+        candidateName: "",  // Placeholder, should be fetched from the candidate details
+        timestamp: block.timestamp,
+        confirmationStatus: true,
+        transactionHash: simulatedTransactionHash
+    });
+
+    votingHistory[_voter].push(newVote);
+    emit VoteCasted(_electionId, _candidateId, _voter, block.timestamp);
 
     // Find the candidate index
     uint candidateIndex = findCandidateIndex(_electionId, _candidateId);
     emit CandidateIndexFound(_electionId, _candidateId, candidateIndex);
 
-    require(candidateIndex != type(uint).max, "Candidate does not exist");
+    if (candidateIndex == type(uint).max) {
+        return (false, "Candidate does not exist");
+    }
 
     // Increment the vote count for the candidate
     electionCandidates[candidateIndex].voteCount++;
@@ -328,15 +374,17 @@ contract Voting {
     emit VoteCountIncremented(_electionId, _candidateId, newVoteCount);
 
     // Mark the sender as having voted
-    votes[_electionId][msg.sender] = true;
-    emit VoterMarked(_electionId, msg.sender);
+    votes[_electionId][_voter] = true;
+    emit VoterMarked(_electionId, _voter);
 
     // Emit the VoteCasted events
-    emit VoteCasted(_electionId, _candidateId, msg.sender);
-    emit VoteCastedEvent(_electionId, _candidateId, msg.sender);
+    emit VoteCasted(_electionId, _candidateId, _voter, block.timestamp);
+    emit VoteCastedEvent(_electionId, _candidateId, _voter, block.timestamp);
 
     // Emit event: Vote casting completed successfully
-    emit VoteCastingCompleted(_electionId, _candidateId, msg.sender, true, "Vote cast successfully");
+    emit VoteCastingCompleted(_electionId, _candidateId, _voter, true, "Vote cast successfully");
+
+    return (true, "Vote cast successfully");
 }
 
 
@@ -408,5 +456,10 @@ contract Voting {
         require(!elections[_electionId].isActive, "Election is still active");
 
         return candidatesByElection[_electionId];
+    }
+
+    // Function to get the voting history of a voter
+    function getVotingHistory(address _voter) public view returns (VoteRecord[] memory) {
+        return votingHistory[_voter];
     }
 }

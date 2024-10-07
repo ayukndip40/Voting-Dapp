@@ -1,5 +1,5 @@
 // userModel.js
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   phoneNumber: { type: String },
   nationalId: { type: String, unique: true, sparse: true, required: true }, // Ensure this is required
-  role: { type: String, default: 'user' },
+  role: { type: String, default: "user" },
   wallet: {
     address: { type: String },
     privateKey: { type: String },
@@ -15,4 +15,4 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

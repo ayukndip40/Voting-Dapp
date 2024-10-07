@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
@@ -14,10 +13,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ResultsPage = ({ results }) => {
-  // Convert results object into an array for easier mapping
   const formattedResults = Object.entries(results).map(([key, value]) => ({
     name: value.name,
-    voteCount: Number(value.voteCount), // Convert voteCount to number
+    voteCount: Number(value.voteCount),
   }));
 
   const maxVoteCount = Math.max(
@@ -26,7 +24,7 @@ const ResultsPage = ({ results }) => {
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto max-h-[400px]">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto max-h-[calc(100vh-300px)]">
       {formattedResults.map((result, index) => {
         const color = `hsl(${
           (index * 360) / formattedResults.length
@@ -36,7 +34,7 @@ const ResultsPage = ({ results }) => {
         return (
           <div
             key={index}
-            className="p-4 bg-white rounded-lg shadow-lg h-40 flex flex-col justify-between"
+            className="p-4 bg-white rounded-lg shadow-lg h-40 flex flex-col justify-between transform hover:scale-105 transition-all duration-300 ease-in-out"
           >
             <div className="flex items-center justify-between">
               <h4 className="text-xl font-semibold">{result.name}</h4>
@@ -47,7 +45,7 @@ const ResultsPage = ({ results }) => {
             </div>
             <div className="mt-4 h-4 bg-gray-200 rounded-lg overflow-hidden">
               <div
-                className="h-full rounded-lg"
+                className="h-full rounded-lg transition-all duration-1000 ease-out"
                 style={{ backgroundColor: color, width: barWidth }}
               />
             </div>
@@ -101,13 +99,8 @@ const ResultPage = () => {
         const electionData = result.election || {};
         const candidatesData = result.results || [];
 
-        // Check if startDate and endDate are valid
         const startDateTimestamp = Number(electionData.startDate);
         const endDateTimestamp = Number(electionData.endDate);
-
-        // Log the timestamps for debugging
-        console.log("Start Date Timestamp:", startDateTimestamp);
-        console.log("End Date Timestamp:", endDateTimestamp);
 
         const formattedStartDate = isNaN(startDateTimestamp)
           ? "Invalid Date"
@@ -136,12 +129,14 @@ const ResultPage = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl p-4 mt-6 bg-gray-100 rounded-lg shadow-lg">
+    <div className="container mx-auto max-w-6xl p-4 mt-6 bg-gray-100 rounded-lg shadow-lg min-h-screen">
       <ToastContainer />
-      <h2 className="text-3xl font-bold text-center mb-6">Election Results</h2>
+      <h2 className="text-4xl font-bold text-center mb-8 text-gray-800">
+        Election Results
+      </h2>
 
-      <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6 mb-6">
-        <div className="w-full">
+      <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6 mb-8">
+        <div className="w-full md:w-2/3">
           <label
             htmlFor="election-select"
             className="block font-medium text-gray-700 mb-2"
@@ -152,7 +147,7 @@ const ResultPage = () => {
             id="election-select"
             value={selectedElectionId}
             onChange={(e) => setSelectedElectionId(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
           >
             <option value="">--Select an Election--</option>
             {elections.map((election) => (
@@ -162,46 +157,50 @@ const ResultPage = () => {
             ))}
           </select>
         </div>
-        <button
-          onClick={handleGetResults}
-          disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 disabled:bg-gray-400"
-        >
-          {loading ? (
-            <div className="flex items-center space-x-2">
-              <svg
-                className="animate-spin h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8H4z"
-                ></path>
-              </svg>
-              <span>Loading...</span>
-            </div>
-          ) : (
-            "Get Results"
-          )}
-        </button>
+        <div className="flex items-center justify-center md:justify-start">
+          <button
+            onClick={handleGetResults}
+            disabled={loading}
+            className="bg-blue-600 text-white px-6 py-3 rounded-md shadow hover:bg-blue-700 disabled:bg-gray-400 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          >
+            {loading ? (
+              <div className="flex items-center space-x-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+                <span>Loading...</span>
+              </div>
+            ) : (
+              "Get Results"
+            )}
+          </button>
+        </div>
       </div>
 
       {message && (
         <div
-          className={`flex items-center space-x-2 mb-4 ${
-            message.includes("Failed") ? "text-red-500" : "text-blue-500"
-          }`}
+          className={`flex items-center space-x-2 mb-6 p-4 rounded-lg ${
+            message.includes("Failed")
+              ? "bg-red-100 text-red-700"
+              : "bg-blue-100 text-blue-700"
+          } transition-all duration-300 ease-in-out`}
         >
           {message.includes("Failed") ? (
             <XCircleIcon className="h-6 w-6" />
@@ -213,20 +212,22 @@ const ResultPage = () => {
       )}
 
       {election && (
-        <div className="bg-white p-6 rounded-lg shadow-lg mb-6 transition-transform duration-300 hover:shadow-xl">
-          <h3 className="text-2xl font-bold text-gray-800 mb-2 hover:text-blue-600 transition-colors duration-300">
+        <div className="bg-white p-6 rounded-lg shadow-lg mb-8 transition-all duration-300 hover:shadow-xl">
+          <h3 className="text-3xl font-bold text-gray-800 mb-4 hover:text-blue-600 transition-colors duration-300">
             {election.title}
           </h3>
-          <p className="text-gray-600 text-md mb-1">
-            <span className="font-semibold">Start Date:</span>
-            {election.startDate}
-          </p>
-          <p className="text-gray-600 text-md mb-1">
-            <span className="font-semibold">End Date:</span>
-            {election.endDate}
-          </p>
-          <div className="mt-4">
-            <button className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <p className="text-gray-600 text-lg">
+              <span className="font-semibold">Start Date:</span>{" "}
+              {election.startDate}
+            </p>
+            <p className="text-gray-600 text-lg">
+              <span className="font-semibold">End Date:</span>{" "}
+              {election.endDate}
+            </p>
+          </div>
+          <div className="mt-6">
+            <button className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
               View Details
             </button>
           </div>

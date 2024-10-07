@@ -115,26 +115,22 @@ const createElection = async (req, res) => {
     const electionDetails = await electionContract.elections(numericId);
     console.log("Election Details:", electionDetails);
 
-    // Prepare election data to be saved in the database
-    console.log("Preparing election data for database...");
+    // Prepare election data to be sent in the response
+    console.log("Preparing election data for response...");
     const createdElection = {
       title,
       description,
-      startDate: moment.unix(startTimestamp).tz(cameroonTimeZone).format(), // Log the local time
-      endDate: moment.unix(endTimestamp).tz(cameroonTimeZone).format(), // Log the local time
+      startDate: moment.unix(startTimestamp).tz(cameroonTimeZone).format(), // Local time
+      endDate: moment.unix(endTimestamp).tz(cameroonTimeZone).format(), // Local time
       blockchainTransactionHash: receipt.transactionHash,
       createdBy,
       electionId: numericId,
       numericId,
     };
 
-    // Save the new election to the database
-    console.log("Saving new election to the database...");
-    const newElection = new Election(createdElection);
-    await newElection.save();
-
-    console.log("Election added to blockchain and database successfully");
-    res.json(newElection);
+    // Respond with the election data
+    console.log("Election added to blockchain successfully");
+    res.json(createdElection); // Changed: Respond with createdElection instead of newElection from DB
   } catch (error) {
     console.error("Error creating election:", error.message);
     res.status(500).json({ error: error.message || "Server Error" });
